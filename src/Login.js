@@ -4,30 +4,46 @@ import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { fire } from "./firebase";
 
 const Login = (props) => {
-  const [email, setEmail] = useState("");
+  const [temail, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   let history = useHistory();
 
   const handleSubmit = (e) => {
     fire
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        // Signed in
-        // var user = userCredential.user;
-        // ...
+      .database()
+      .ref("users")
+      .once("value", (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          // var childKey = childSnapshot.key ;
+          // var childData = childSnapshot.val();
+          // ...
+          var { user_name, email } = childSnapshot.val();
 
-        console.log("Login Successful");
+          // console.log(user_name, email);
 
-        // window.location = "/newsfeed";
-        history.push("/newsfeed");
-      })
-      .catch((error) => {
-        // var errorCode = error.code;
-        var errorMessage = error.message;
+          if (temail === user_name || temail === email) {
+            fire
+              .auth()
+              .signInWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                // Signed in
+                // var user = userCredential.user;
+                // ...
 
-        console.log(errorMessage);
+                console.log("Login Successful");
+
+                // window.location = "/newsfeed";
+                history.replace("/newsfeed");
+              })
+              .catch((error) => {
+                // var errorCode = error.code;
+                var errorMessage = error.message;
+
+                console.log(errorMessage);
+              });
+          }
+        });
       });
     e.preventDefault();
   };
@@ -40,15 +56,15 @@ const Login = (props) => {
         height="100"
         alt="twitter"
       />
-      <h1 className="mb-4">Login to Twitter</h1>
+      <h1 className="mb-4 text-center">Login to Twitter</h1>
       <Form className="w-25 mx-auto" onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="exampleEmail">Email</Label>
+          <Label for="exampleEmail">Email, or username</Label>
           <Input
-            type="email"
-            name="email"
-            id="exampleEmail"
-            placeholder="something@idk.cool"
+            type="text"
+            // name="email"
+            // id="exampleEmail"
+            // placeholder="something@idk.cool"
             required
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -59,7 +75,7 @@ const Login = (props) => {
             type="password"
             name="password"
             id="examplePassword"
-            placeholder="don't tell!"
+            // placeholder="don't tell!"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
