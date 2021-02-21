@@ -1,26 +1,26 @@
 import Signup from "./Signup";
 import Example from "./Navbar";
-import { Col, Container, Row } from "reactstrap";
+// import "./App.css";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import Login from "./Login";
+import NewsFeed from "./components/Newsfeed";
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Example />
-      <Container
-        className="border border-danger text-center d-flex align-items-center justify-content-center"
-        style={{ minHeight: "90vh" }}
-      >
-        <Row className="">
-          <Col xs="12" md="6" className="border border-danger my-auto">
-            <h1>Welcome</h1>
-          </Col>
-          <Col xs="12" md="6" className="border border-danger">
-            <Signup />
-          </Col>
-        </Row>
-      </Container>
-      {/* <Signup /> */}
-    </>
+      <Switch>
+        <Route exact path="/">
+          <Signup />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/newsfeed">
+          <NewsFeed />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
