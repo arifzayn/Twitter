@@ -7,47 +7,85 @@ import {
   Nav,
   NavItem,
   NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
   // UncontrolledDropdown,
   // DropdownToggle,
   // DropdownMenu,
   // DropdownItem,
   // NavbarText,
 } from "reactstrap";
+import { NavLink as RRNavLink } from "react-router-dom";
+import { fire } from "./firebase";
 
 const Example = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
+  const [users, setUser] = useState(null);
+
+  // let history = useHistory();
+
+  fire.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      // User is signed in.
+      setUser(user);
+      // console.log(user);
+    } else {
+      // No user is signed in.
+    }
+  });
+
+  const logout = () => {
+    fire
+      .auth()
+      .signOut()
+      .then(() => {
+        // Sign-out successful.
+        console.log("Sign-out successful.");
+        window.location = "/";
+        // history.push("/");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
+
   return (
-    <div>
-      <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">Twitter</NavbarBrand>
-        <NavbarToggler onClick={toggle} />
-        <Collapse isOpen={isOpen} navbar>
-          <Nav className="ml-auto" navbar>
-            <NavItem>
-              <NavLink href="">Login</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="https://github.com/arifzayn">GitHub</NavLink>
-            </NavItem>
-            {/* <UncontrolledDropdown nav inNavbar>
+    // <div>
+    <Navbar color="light" light expand="md" sticky="top">
+      <NavbarBrand href="/">Twitter</NavbarBrand>
+      <NavbarToggler onClick={toggle} />
+      <Collapse isOpen={isOpen} navbar>
+        <Nav className="ml-auto" navbar>
+          {users ? (
+            <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
-                Options
+                {users.email}
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem>Option 1</DropdownItem>
-                <DropdownItem>Option 2</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Reset</DropdownItem>
+                <DropdownItem onClick={logout}>Logout</DropdownItem>
               </DropdownMenu>
-            </UncontrolledDropdown> */}
-          </Nav>
-          {/* <NavbarText>Simple Text</NavbarText> */}
-        </Collapse>
-      </Navbar>
-    </div>
+            </UncontrolledDropdown>
+          ) : (
+            <NavItem>
+              <NavLink tag={RRNavLink} to="/login" onClick={toggle}>
+                Login
+              </NavLink>
+            </NavItem>
+          )}
+
+          <NavItem>
+            <NavLink href="https://github.com/arifzayn">GitHub</NavLink>
+          </NavItem>
+        </Nav>
+      </Collapse>
+    </Navbar>
+    // </div>
   );
 };
 
