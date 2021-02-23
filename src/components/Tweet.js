@@ -17,8 +17,7 @@ import { fire } from "../firebase";
 const Tweet = (props) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState("");
-  const [datetime, setDatetime] = useState(0);
-  const [likes, setLikes] = useState(0);
+  let [likes, setLikes] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,19 +25,32 @@ const Tweet = (props) => {
       if (user) {
         // User is signed in.
         console.log(user);
-        // fire
-        //   .database()
-        //   .ref("tweets/" + user.uid)
-        //   .set({
-        //     tweet_text: text,
-        //     tweet_image: image,
-        //     uid: user.uid,
-        //     tweet_datetime: datetime,
-        //     tweet_likes: likes,
-        //   });
+
+        var storage = fire.storage();
+
+        var storageRef = storage.ref();
+
+        var imagesRef = storageRef.child(image.name);
+
+        imagesRef.put(image).then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("File available at", downloadURL);
+
+            fire
+              .database()
+              .ref("tweets/" + user.uid)
+              .push({
+                tweet_text: text,
+                tweet_image: downloadURL,
+                id: user.email,
+                // timestamp: fire.database.ServerValue.TIMESTAMP,
+              });
+          });
+        });
 
         setText("");
-        setImage(null);
       } else {
         // No user is signed in.
       }
@@ -65,6 +77,7 @@ const Tweet = (props) => {
                 // id="exampleText"
                 value={text}
                 placeholder="Write something.."
+                required
                 onChange={(e) => setText(e.target.value)}
               />
               <Label for="exampleFile">Image</Label>
@@ -74,7 +87,7 @@ const Tweet = (props) => {
                 onChange={(e) => setImage(e.target.files[0])}
               />
             </FormGroup>
-            <Button>Tweet</Button>
+            <Button onClick={() => setLikes(likes++)}>Tweet</Button>
           </Form>
         </CardBody>
       </Card>
