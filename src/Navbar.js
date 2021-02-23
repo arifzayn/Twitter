@@ -11,16 +11,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  // UncontrolledDropdown,
-  // DropdownToggle,
-  // DropdownMenu,
-  // DropdownItem,
-  // NavbarText,
 } from "reactstrap";
 import { NavLink as RRNavLink } from "react-router-dom";
 import { fire } from "./firebase";
 
-const Example = (props) => {
+const Example = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -56,7 +51,6 @@ const Example = (props) => {
   };
 
   return (
-    // <div>
     <Navbar color="light" light expand="md" sticky="top">
       <NavbarBrand href="/">Twitter</NavbarBrand>
       <NavbarToggler onClick={toggle} />
@@ -68,6 +62,17 @@ const Example = (props) => {
                 {users.email}
               </DropdownToggle>
               <DropdownMenu right>
+                <DropdownItem>
+                  <NavItem>
+                    <NavLink
+                      tag={RRNavLink}
+                      to="/profile"
+                      onClick={() => console.log("Profile")}
+                    >
+                      Profile
+                    </NavLink>
+                  </NavItem>
+                </DropdownItem>
                 <DropdownItem onClick={logout}>Logout</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
@@ -85,7 +90,6 @@ const Example = (props) => {
         </Nav>
       </Collapse>
     </Navbar>
-    // </div>
   );
 };
 
