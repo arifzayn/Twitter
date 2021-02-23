@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
 
 import { fire } from "./firebase";
 
-const Signup = (props) => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -22,10 +22,6 @@ const Signup = (props) => {
   const [profileImage, setProfileImage] = useState("");
 
   let history = useHistory();
-
-  // useEffect(() => {
-
-  // }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,6 +43,7 @@ const Signup = (props) => {
 
         imagesRef.put(profileImage).then((snapshot) => {
           console.log("Uploaded a blob or file!");
+
           snapshot.ref.getDownloadURL().then((downloadURL) => {
             console.log("File available at", downloadURL);
 
@@ -87,7 +84,6 @@ const Signup = (props) => {
             <h1>Welcome</h1>
           </Col>
           <Col xs="12" md="6" className="border border-danger">
-            {/* <Signup /> */}
             <img
               src="https://cdn.worldvectorlogo.com/logos/twitter-5.svg"
               width="100"
@@ -158,7 +154,6 @@ const Signup = (props) => {
                   id="exampleFile"
                   onChange={(e) => setProfileImage(e.target.files[0])}
                 />
-                {/* {onFileChange()} */}
               </FormGroup>
               <Button color="primary" block>
                 Submit
