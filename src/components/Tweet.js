@@ -87,7 +87,7 @@ const Tweet = (props) => {
                 onChange={(e) => setImage(e.target.files[0])}
               />
             </FormGroup>
-            <Button onClick={() => setLikes(likes++)}>Tweet</Button>
+            <Button>Tweet</Button>
           </Form>
         </CardBody>
       </Card>
