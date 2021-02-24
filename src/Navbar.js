@@ -64,12 +64,15 @@ const Example = () => {
               <DropdownMenu right>
                 <DropdownItem>
                   <NavItem>
-                    <NavLink
-                      tag={RRNavLink}
-                      to="/profile"
-                      onClick={() => console.log("Profile")}
-                    >
+                    <NavLink tag={RRNavLink} to="/profile">
                       Profile
+                    </NavLink>
+                  </NavItem>
+                </DropdownItem>
+                <DropdownItem>
+                  <NavItem>
+                    <NavLink tag={RRNavLink} to="/newsfeed">
+                      Newsfeed
                     </NavLink>
                   </NavItem>
                 </DropdownItem>
