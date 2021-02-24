@@ -54,10 +54,10 @@ const Signup = () => {
                 uid: user.uid,
                 email: email,
                 user_name: username,
-                password: password,
                 full_name: fullName,
                 contact: contact,
                 profile_picture: downloadURL,
+                status: "Hi! 🐱‍👤",
               });
           });
         });
