@@ -1,5 +1,5 @@
 import Signup from "./Signup";
-import Example from "./Navbar";
+import Navigationbar from "./Navbar";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Login from "./Login";
 import NewsFeed from "./components/Newsfeed";
@@ -23,7 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Example />
+      <Navigationbar />
       <Switch>
         <Route exact path="/">
           {/* {loggedIn ? <Redirect to="/newsfeed" /> : <Signup />} */}
