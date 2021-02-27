@@ -1,8 +1,9 @@
-import { Col, Container, Input, Row } from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import Tweet from "./Tweet";
 import { database, fire } from "../firebase";
 import { useEffect, useState } from "react";
 import Feed from "./Feed";
+import Users from "./Users";
 const Newsfeed = () => {
   const [data, setData] = useState("");
 
@@ -13,11 +14,6 @@ const Newsfeed = () => {
 
         database.ref("tweets").once("value", (snapshot) => {
           setData(snapshot.val());
-          // snapshot.forEach((childSnapshot) => {
-          //   // var childKey = childSnapshot.key ;
-          //   // var childData = childSnapshot.val();
-          //   // ...
-          // });
         });
       } else {
         // No user is signed in.
@@ -26,35 +22,26 @@ const Newsfeed = () => {
   }, []);
 
   return (
-    <Container>
-      <Input
-        type="text"
-        name="text"
-        id="exampleText"
-        placeholder="Search Users.."
-        className="w-25 mt-4"
-      />
-      <h1 className="text-center display-1">Newsfeed</h1>
-      <Row>
-        <Col xs="6" sm="3" className="border border-danger">
-          <Tweet />
-        </Col>
-        <Col xs="auto" sm="6" className="border border-danger">
-          {/* .col-6 .col-sm-4 */}
-          <Feed tweets={data} />
-        </Col>
-        <Col sm="3" className="border border-danger">
-          <h1>Users</h1>
-          {Object.values(data).map((d, i) => {
-            return (
-              <ul key={i}>
-                <li>{d.user_name}</li>
-              </ul>
-            );
-          })}
-        </Col>
-      </Row>
-    </Container>
+    <div className="img">
+      <Container>
+        <h1 className="text-center display-3" style={{ fontWeight: "bolder" }}>
+          Newsfeed
+        </h1>
+        <Row>
+          <Col xs="12" sm="3" className="mb-4">
+            <div className="d-flex justify-content-center">
+              <Tweet />
+            </div>
+          </Col>
+          <Col xs="auto" sm="6">
+            <Feed tweets={data} />
+          </Col>
+          <Col sm="3">
+            <Users />
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 
