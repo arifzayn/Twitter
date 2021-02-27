@@ -1,26 +1,34 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Form, FormGroup, Label, Input } from "reactstrap";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Spinner,
+  Alert,
+  Container,
+} from "reactstrap";
 import { fire } from "./firebase";
 
-const Login = (props) => {
+const Login = () => {
   const [temail, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   let history = useHistory();
 
   const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
     fire
       .database()
       .ref("users")
       .once("value", (snapshot) => {
         snapshot.forEach((childSnapshot) => {
-          // var childKey = childSnapshot.key ;
-          // var childData = childSnapshot.val();
           // ...
           var { user_name, email } = childSnapshot.val();
-
-          // console.log(user_name, email);
 
           if (temail === user_name || temail === email) {
             fire
@@ -33,7 +41,6 @@ const Login = (props) => {
 
                 console.log("Login Successful");
 
-                // window.location = "/newsfeed";
                 history.replace("/newsfeed");
               })
               .catch((error) => {
@@ -45,44 +52,81 @@ const Login = (props) => {
           }
         });
       });
-    e.preventDefault();
   };
 
   return (
-    <>
-      <img
-        src="https://cdn.worldvectorlogo.com/logos/twitter-5.svg"
-        width="100"
-        height="100"
-        alt="twitter"
-      />
-      <h1 className="mb-4 text-center">Login to Twitter</h1>
-      <Form className="w-25 mx-auto" onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label for="exampleEmail">Email, or username</Label>
-          <Input
-            type="text"
-            // name="email"
-            // id="exampleEmail"
-            // placeholder="something@idk.cool"
-            required
-            onChange={(e) => setEmail(e.target.value)}
+    <div>
+      {isLoading ? (
+        <Container className="d-flex flex-column justify-content-center align-items-center mt-4">
+          <img
+            src="https://cdn.worldvectorlogo.com/logos/twitter-5.svg"
+            width="100"
+            height="100"
+            alt="twitter"
           />
-        </FormGroup>
-        <FormGroup>
-          <Label for="examplePassword">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            id="examplePassword"
-            // placeholder="don't tell!"
-            required
-            onChange={(e) => setPassword(e.target.value)}
+          <h1 className="mb-4">Login to Twitter</h1>
+          <Form className="w-25" onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label for="exampleEmail">Email, or username</Label>
+              <Input
+                type="text"
+                required
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="examplePassword">Password</Label>
+              <Input
+                type="password"
+                name="password"
+                id="examplePassword"
+                required
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FormGroup>
+            <Button color="info" block>
+              Login
+            </Button>
+            <Alert color="light">
+              <Spinner size="sm" />
+              You will be redirected shortly and if not then you have entered
+              Invalid Credentials!
+            </Alert>
+          </Form>
+        </Container>
+      ) : (
+        <Container className="d-flex flex-column justify-content-center align-items-center mt-4">
+          <img
+            src="https://cdn.worldvectorlogo.com/logos/twitter-5.svg"
+            width="100"
+            height="100"
+            alt="twitter"
           />
-        </FormGroup>
-        <Button>Submit</Button>
-      </Form>
-    </>
+          <h1 className="mb-4">Login to Twitter</h1>
+          <Form className="w-25" onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label for="exampleEmail">Email, or username</Label>
+              <Input
+                type="text"
+                required
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="examplePassword">Password</Label>
+              <Input
+                type="password"
+                name="password"
+                id="examplePassword"
+                required
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FormGroup>
+            <Button block>Submit</Button>
+          </Form>
+        </Container>
+      )}
+    </div>
   );
 };
 
