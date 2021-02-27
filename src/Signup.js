@@ -75,15 +75,12 @@ const Signup = () => {
 
   return (
     <>
-      <Container
-        className="border border-danger text-center d-flex align-items-center justify-content-center"
-        style={{ minHeight: "90vh" }}
-      >
+      <Container className="text-center" style={{ minHeight: "90vh" }}>
         <Row>
-          <Col xs="12" md="6" className="border border-danger my-auto">
+          <Col xs="12" md="6" className="my-auto">
             <h1>Welcome</h1>
           </Col>
-          <Col xs="12" md="6" className="border border-danger">
+          <Col xs="12" md="6">
             <img
               src="https://cdn.worldvectorlogo.com/logos/twitter-5.svg"
               width="100"
@@ -91,7 +88,7 @@ const Signup = () => {
               alt="twitter"
             />
             <h1 className="mb-4">Signup to Twitter</h1>
-            <Form className="w-75 mx-auto" onSubmit={handleSubmit}>
+            <Form className="w-75 mb-4 mx-auto" onSubmit={handleSubmit}>
               <FormGroup>
                 <Label for="exampleEmail">Email</Label>
                 <Input
@@ -155,7 +152,7 @@ const Signup = () => {
                   onChange={(e) => setProfileImage(e.target.files[0])}
                 />
               </FormGroup>
-              <Button color="primary" block>
+              <Button color="info" block>
                 Submit
               </Button>
             </Form>
