@@ -28,7 +28,9 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [status, setStatus] = useState("");
-  const [data, setData] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [newProfileImage, setNewProfileImage] = useState("");
+  const [tweetsData, setTweetsData] = useState("");
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -43,15 +45,9 @@ const Profile = () => {
           .database()
           .ref("tweets/" + user.uid)
           .once("value", (snapshot) => {
-            setData(snapshot.val());
-            // Object.values(data).forEach((ele) => {
-            //   console.log(ele);
-            // });
-            // snapshot.forEach((childSnapshot) => {
-            //   // var childKey = childSnapshot.key ;
-            //   // var childData = childSnapshot.val();
-            //   // ...
-            // });
+            if (snapshot.exists()) {
+              setTweetsData(snapshot.val());
+            }
           });
 
         fire
@@ -59,11 +55,10 @@ const Profile = () => {
           .ref("users/" + user.uid)
           .once("value", (snapshot) => {
             if (snapshot.exists()) {
-              console.log(snapshot.val());
-              console.log();
               setName(snapshot.val().full_name);
               setContact(snapshot.val().contact);
               setStatus(snapshot.val().status);
+              setProfileImage(snapshot.val().profile_picture);
             } else {
               console.log("No data available");
             }
@@ -72,31 +67,34 @@ const Profile = () => {
         // No user is signed in.
       }
     });
-  }, []);
+  }, [profileImage]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
         // User is signed in.
 
-        fire
-          .database()
-          .ref("users/" + user.uid)
-          .update(
-            {
-              full_name: name,
-              contact: contact,
-              status: status,
-            },
-            (error) => {
-              if (error) {
-                // The write failed...
-              } else {
-                // Data saved successfully!
-                console.log("Profile Updated!");
-              }
-            }
-          );
+        var storage = fire.storage();
+        var storageRef = storage.ref();
+        var imagesRef = storageRef.child(name);
+
+        imagesRef.put(newProfileImage).then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            fire
+              .database()
+              .ref("users/" + user.uid)
+              .update({
+                full_name: name,
+                contact: contact,
+                status: status,
+                profile_picture: downloadURL,
+              });
+          });
+        });
       } else {
         // No user is signed in.
       }
@@ -106,22 +104,29 @@ const Profile = () => {
 
   return (
     <div
+      className="img text-center"
       style={{
-        // backgroundImage: 'url("")',
-        // backgroundSize: "cover",
-        // backgroundRepeat: "no-repeat",
-        height: "93vh",
-        // background: #74ebd5;  /* fallback for old browsers */
-        // background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5);  /* Chrome 10-25, Safari 5.1-6 */
-        // background:
-        // "linear-gradient(to right, #ACB6E5, #74ebd5)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */,
+        height: "93.6vh",
       }}
     >
       <Container>
-        <h1 className="text-center display-1">Profile</h1>
+        <h1 className="text-center display-3" style={{ fontWeight: "bolder" }}>
+          Profile
+        </h1>
+
         <Row className="mt-4">
-          <Col xs="12" md="6" className="border border-danger mb-4">
+          <Col xs="12" md="6" className="mb-4">
+            <h5>Update your profile..</h5>
             <Form className="w-75 mx-auto" onSubmit={handleSubmit}>
+              <div className="my-4">
+                <img
+                  src={profileImage}
+                  width="100"
+                  height="100"
+                  alt="DP"
+                  style={{ borderRadius: "50%" }}
+                />
+              </div>
               <FormGroup row>
                 <Label for="exampleName" sm={2}>
                   Name
@@ -167,19 +172,27 @@ const Profile = () => {
                   Profile Picture
                 </Label>
                 <Col sm={10}>
-                  <Input type="file" name="file" id="exampleFile" />
+                  <Input
+                    type="file"
+                    name="file"
+                    id="exampleFile"
+                    required
+                    onChange={(e) => setNewProfileImage(e.target.files[0])}
+                  />
                   <FormText color="muted">Choose a profile picture</FormText>
                 </Col>
               </FormGroup>
               <FormGroup check row>
                 <Col sm={{ size: 10, offset: 2 }}>
-                  <Button>Update</Button>
+                  <Button color="info" block>
+                    Update
+                  </Button>
                 </Col>
               </FormGroup>
             </Form>
           </Col>
 
-          <Col xs="12" md="6" className="border border-danger">
+          <Col xs="12" md="6">
             <div>
               <Nav tabs>
                 <NavItem>
@@ -216,11 +229,13 @@ const Profile = () => {
               <TabContent activeTab={activeTab}>
                 <TabPane tabId="1">
                   <Col sm="12" className="mt-4">
-                    {Object.values(data).map((d, index) => {
+                    {Object.values(tweetsData).map((d, index) => {
                       return (
-                        <div className="d-flex justify-content-center">
+                        <div
+                          key={index}
+                          className="d-flex justify-content-center"
+                        >
                           <Card
-                            key={index}
                             className="mb-4"
                             style={{
                               width: "18rem",
@@ -234,7 +249,6 @@ const Profile = () => {
                             <Card body>
                               <CardTitle>{d.id}</CardTitle>
                               <CardText>{d.tweet_text}</CardText>
-                              {/* <Button>Go somewhere</Button> */}
                             </Card>
                           </Card>
                         </div>
