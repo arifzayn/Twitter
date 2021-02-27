@@ -106,7 +106,7 @@ const Navigationbar = () => {
             <AwesomeButtonSocial
               type="github"
               target="_blank"
-              href="https://github.com/arifzayn"
+              href="https://github.com/arifzayn/Twitter"
               size="medium"
             ></AwesomeButtonSocial>
             {/* </NavLink> */}
